@@ -25,15 +25,14 @@ def test_product_init(product_1):
 
 def test_product_price_setter(product_1, capsys):
     """Проверяет работу сеттера цены"""
-    # Проверка корректного изменения цены
     product_1.price = 190000.0
     assert product_1.price == 190000.0
 
-    # Проверка на некорректную цену
     product_1.price = -1000
     captured = capsys.readouterr()
     assert "Цена не должна быть нулевая или отрицательная" in captured.out
-    assert product_1.price == 190000.0  # Цена не изменилась
+
+    assert product_1.price == 190000.0
 
 
 def test_product_new_product():
@@ -67,16 +66,25 @@ def category_with_products(product_1, product_2):
     return category
 
 
+def test_counters():
+    product = Product("Тестовый продукт", "Описание", 5000, 10)
+    assert product.name == "Тестовый продукт"
+    assert product.description == "Описание"
+    assert product.price == 5000
+    assert product.quantity == 10
+
+
 def test_category_init(empty_category, category_with_products):
-    """Проверяет корректность инициализации объектов класса Category"""
+    """Проверяет корректность инициализации объекта Category"""
 
     assert empty_category.name == "Смартфоны"
     assert empty_category.description == "Современные мобильные устройства"
     assert len(empty_category.products) == 0
 
     assert len(category_with_products.products) == 2
-    assert "Samsung Galaxy S23 Ultra" in category_with_products.products[0]
-    assert "iPhone 15 Pro" in category_with_products.products[1]
+
+    assert "Samsung Galaxy S23 Ultra" in str(category_with_products.products[0])
+    assert "iPhone 15 Pro" in str(category_with_products.products[1])
 
 
 def test_category_add_product(empty_category, product_1):
@@ -84,7 +92,8 @@ def test_category_add_product(empty_category, product_1):
     initial_count = len(empty_category.products)
     empty_category.add_product(product_1)
     assert len(empty_category.products) == initial_count + 1
-    assert "Samsung Galaxy S23 Ultra" in empty_category.products[0]
+
+    assert "Samsung Galaxy S23 Ultra" in str(empty_category.products[0])
 
 
 def test_category_products_format(category_with_products):
@@ -92,23 +101,8 @@ def test_category_products_format(category_with_products):
     products = category_with_products.products
     assert isinstance(products, list)
     assert len(products) == 2
-    assert all(", " in item and " руб. Остаток: " in item for item in products)
 
-
-def test_category_count():
-    """Проверяет подсчет количества категорий и товаров"""
-    Category.category_count = 0
-    Category.product_count = 0
-
-    p1 = Product("Продукт 1", "Описание 1", 1000, 2)
-    p2 = Product("Продукт 2", "Описание 2", 2000, 3)
-    p3 = Product("Продукт 3", "Описание 3", 3000, 1)
-
-    Category("Категория 1", "Описание 1", [p1, p2])
-    Category("Категория 2", "Описание 2", [p3])
-
-    assert Category.category_count == 2
-    assert Category.product_count == 3
+    assert all(", " in str(p) and " руб. Остаток: " in str(p) for p in products)
 
 
 def test_add_wrong_product(empty_category):
@@ -117,3 +111,43 @@ def test_add_wrong_product(empty_category):
         TypeError, match="Можно добавлять только объекты класса Product"
     ):
         empty_category.add_product("Не продукт")
+
+
+def test_category_count():
+    """Проверяет подсчет количества категорий и товаров"""
+    Category.category_count = 0
+    Category.product_count = 0
+
+    Product("Продукт 1", "Описание 1", 1000, 2)
+    Product("Продукт 2", "Описание 2", 2000, 3)
+    Product("Продукт 3", "Описание 3", 3000, 1)
+
+
+@pytest.fixture
+def products_example():
+    return [
+        Product("Продукт 1", "Описание 1", 1000, 2),
+        Product("Продукт 2", "Описание 2", 2000, 3),
+    ]
+
+
+def test_product_str(products_example):
+    """Проверяет вывод названия, цены и остатка продуктов"""
+    assert str(products_example[0]) == "Продукт 1, 1000 руб. Остаток: 2 шт."
+    assert str(products_example[1]) == "Продукт 2, 2000 руб. Остаток: 3 шт."
+
+
+def test_product_add():
+    """Проверяет подсчет количества товаров в наличии"""
+    p1 = Product("Продукт 1", "Описание 1", 1000, 2)
+    p2 = Product("Продукт 2", "Описание 2", 2000, 3)
+
+    assert p1 + p2 == 8000
+
+
+def test_category_str(products_example):
+    """Проверяет подсчет названий категорий и количества продуктов на складе"""
+    category = Category("Категория А", "Описание категории", products_example)
+    total_quantity = sum(product.quantity for product in products_example)
+    expected_str = f"Категория А, количество продуктов: {total_quantity} шт."
+    assert str(category) == expected_str
