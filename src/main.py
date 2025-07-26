@@ -30,6 +30,15 @@ class Product:
         else:
             self.__price = amount
 
+    def __str__(self):
+        return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other):
+        """Считает сумму всех товаров в наличии"""
+        if isinstance(other, Product):
+            result = (self.__price * self.quantity) + (other.price * other.quantity)
+            return result
+
 
 class Category:
     """Класс представляющий категорию товара."""
@@ -58,8 +67,9 @@ class Category:
 
     @property
     def products(self):
-        """Возвращает список товаров в виде строк (для совместимости с вашим кодом)"""
-        return [
-            f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт."
-            for product in self.__products
-        ]
+        return self.__products
+
+    def __str__(self):
+        """Возвращает строку с названием категории и общим количеством товаров"""
+        total_quantity = sum(product.quantity for product in self.__products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
