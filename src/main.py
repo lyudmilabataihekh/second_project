@@ -36,8 +36,36 @@ class Product:
     def __add__(self, other):
         """Считает сумму всех товаров в наличии"""
         if isinstance(other, Product):
-            result = (self.__price * self.quantity) + (other.price * other.quantity)
-            return result
+            if type(self) is not type(other):
+                raise TypeError("Товары должны быть одинковых классов.")
+            else:
+                result = (self.__price * self.quantity) + (other.price * other.quantity)
+                return result
+
+
+class Smartphone(Product):
+    """Представляет категорию класса класса Product,  товара «Смартфон»"""
+
+    def __init__(
+        self, name, description, price, quantity, efficiency, model, memory, color
+    ):
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+
+class LawnGrass(Product):
+    """Представляет категорию класса класса Product, товара «Трава газонная»"""
+
+    def __init__(
+        self, name, description, price, quantity, country, germination_period, color
+    ):
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
 
 
 class Category:
@@ -59,7 +87,7 @@ class Category:
 
     def add_product(self, product):
         """Добавляет объект Product в категорию"""
-        if isinstance(product, Product):
+        if issubclass(type(product), Product):
             self.__products.append(product)
             Category.product_count += 1
         else:
