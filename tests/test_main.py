@@ -1,6 +1,6 @@
 import pytest
 
-from src.main import Category, Product
+from src.main import Category, Product, Smartphone, LawnGrass
 
 
 @pytest.fixture
@@ -151,3 +151,31 @@ def test_category_str(products_example):
     total_quantity = sum(product.quantity for product in products_example)
     expected_str = f"Категория А, количество продуктов: {total_quantity} шт."
     assert str(category) == expected_str
+
+
+def test_smartphone_add():
+    """Проверяет сложение товаров и подсчет стоимости"""
+    smartphone1 = Smartphone("Phone1", "desc", 1000, 2, "A", "ModelX", "64GB", "Black")
+    smartphone2 = Smartphone("Phone2", "desc", 1500, 3, "A", "ModelY", "128GB", "White")
+    total_price = smartphone1 + smartphone2
+    expected = (smartphone1.price * smartphone1.quantity) + (
+        smartphone2.price * smartphone2.quantity
+    )
+    assert total_price == expected
+
+
+def test_lawngrass_add():
+    """Проверяет сложение товаров и подсчет стоимости"""
+    lawn1 = LawnGrass("Lawn1", "desc", 20, 5, "Russia", 15, "Green")
+    lawn2 = LawnGrass("Lawn2", "desc", 25, 3, "Russia", 10, "Dark Green")
+    total_price = lawn1 + lawn2
+    expected = (lawn1.price * lawn1.quantity) + (lawn2.price * lawn2.quantity)
+    assert total_price == expected
+
+
+def test_error_raise():
+    """Проверяет обработку ошибки TypeError"""
+    smartphone = Smartphone("Phone", "desc", 1000, 2, "A", "ModelX", "64GB", "Black")
+    lawn = LawnGrass("Lawn", "desc", 20, 5, "Russia", 15, "Green")
+    with pytest.raises(TypeError):
+        smartphone + lawn
