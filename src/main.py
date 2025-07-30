@@ -34,13 +34,15 @@ class Product:
         return f"{self.name}, {self.__price} руб. Остаток: {self.quantity} шт."
 
     def __add__(self, other):
-        """Считает сумму всех товаров в наличии"""
+        """Считает сумму всех товаров в наличии, если типы совпадают."""
         if isinstance(other, Product):
             if type(self) is not type(other):
-                raise TypeError("Товары должны быть одинковых классов.")
+                raise TypeError("Товары должны быть одного класса.")
             else:
-                result = (self.__price * self.quantity) + (other.price * other.quantity)
-                return result
+                total_price = (self.price * self.quantity) + (other.price * other.quantity)
+                return total_price
+        else:
+            raise TypeError("Можно складывать только объекты класса Product.")
 
 
 class Smartphone(Product):

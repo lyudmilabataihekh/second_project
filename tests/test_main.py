@@ -175,7 +175,6 @@ def test_lawngrass_add():
 
 def test_error_raise():
     """Проверяет обработку ошибки TypeError"""
-    smartphone = Smartphone("Phone", "desc", 1000, 2, "A", "ModelX", "64GB", "Black")
-    lawn = LawnGrass("Lawn", "desc", 20, 5, "Russia", 15, "Green")
+    item = Product("test", "description", 100, 1)
     with pytest.raises(TypeError):
-        smartphone + lawn
+        item + "not a product"
