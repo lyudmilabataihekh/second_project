@@ -178,3 +178,27 @@ def test_error_raise():
     item = Product("test", "description", 100, 1)
     with pytest.raises(TypeError):
         item + "not a product"
+
+
+def test_abstract_method():
+    """Проверяет, что все классы реализуют get_data()"""
+    product = Product("Телефон", "Смартфон", 10000, 5)
+
+    data = product.get_data()
+    assert isinstance(data, dict)
+    assert "name" in data
+    assert "price" in data
+    assert "quantity" in data
+    assert "description" in data
+
+
+def test_mixin_repr():
+    """Проверяет работу __repr__ из миксина"""
+    product = Product("Ноутбук", "для работы", 30000, 1)
+    repr_str = repr(product)
+
+    assert "Product(" in repr_str
+    assert 'name="Ноутбук"' in repr_str
+    assert 'description="для работы"' in repr_str
+    assert 'price="30000"' in repr_str
+    assert 'quantity="1"' in repr_str
