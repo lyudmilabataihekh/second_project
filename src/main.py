@@ -1,4 +1,32 @@
-class Product:
+from abc import ABC, abstractmethod
+
+
+class BaseProduct(ABC):
+    """Выводит основную информацию о товаре"""
+
+    @abstractmethod
+    def get_data(self):
+        pass
+
+
+class CreatedObjectMixin:
+    """Миксин для создания объектов с базовыми атрибутами"""
+    name: str
+    description: str
+    _Product__price = int
+    quantity: int
+
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__}("
+            f'name="{self.name}", '
+            f'description="{self.description}", '
+            f'price="{self._Product__price}", '
+            f'quantity="{self.quantity}")'
+        )
+
+
+class Product(CreatedObjectMixin, BaseProduct):
     """Класс представляющий товар"""
 
     def __init__(self, name, description, price, quantity):
@@ -6,6 +34,7 @@ class Product:
         self.description = description
         self.__price = price
         self.quantity = quantity
+        super().__init__()
 
     @classmethod
     def new_product(cls, product_data):
@@ -39,10 +68,20 @@ class Product:
             if type(self) is not type(other):
                 raise TypeError("Товары должны быть одного класса.")
             else:
-                total_price = (self.price * self.quantity) + (other.price * other.quantity)
+                total_price = (self.price * self.quantity) + (
+                    other.price * other.quantity
+                )
                 return total_price
         else:
             raise TypeError("Можно складывать только объекты класса Product.")
+
+    def get_data(self):
+        return {
+            "name": self.name,
+            "description": self.description,
+            "price": self.__price,
+            "quantity": self.quantity,
+        }
 
 
 class Smartphone(Product):
@@ -57,6 +96,9 @@ class Smartphone(Product):
         self.memory = memory
         self.color = color
 
+    def get_data(self):
+        return f"Название:{self.name}, цена: {self.__price}"
+
 
 class LawnGrass(Product):
     """Представляет категорию класса класса Product, товара «Трава газонная»"""
@@ -68,6 +110,9 @@ class LawnGrass(Product):
         self.country = country
         self.germination_period = germination_period
         self.color = color
+
+    def get_data(self):
+        return f"Название:{self.name}, цена: {self.__price}"
 
 
 class Category:
