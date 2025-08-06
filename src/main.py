@@ -11,6 +11,7 @@ class BaseProduct(ABC):
 
 class CreatedObjectMixin:
     """Миксин для создания объектов с базовыми атрибутами"""
+
     name: str
     description: str
     _Product__price = int
@@ -30,6 +31,8 @@ class Product(CreatedObjectMixin, BaseProduct):
     """Класс представляющий товар"""
 
     def __init__(self, name, description, price, quantity):
+        if quantity == 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен")
         self.name = name
         self.description = description
         self.__price = price
@@ -148,3 +151,11 @@ class Category:
         """Возвращает строку с названием категории и общим количеством товаров"""
         total_quantity = sum(product.quantity for product in self.__products)
         return f"{self.name}, количество продуктов: {total_quantity} шт."
+
+    def middle_price(self):
+        try:
+            total_price = sum(product.price for product in self.__products)
+            count = len(self.__products)
+            return total_price / count
+        except ZeroDivisionError:
+            return 0
