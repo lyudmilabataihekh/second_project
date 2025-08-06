@@ -202,3 +202,34 @@ def test_mixin_repr():
     assert 'description="для работы"' in repr_str
     assert 'price="30000"' in repr_str
     assert 'quantity="1"' in repr_str
+
+
+def test_create_product():
+    """Прверяет работу исключения при нулевом количестве товаров"""
+    try:
+        Product("a", "b", 10, 0)
+        print("Исключение не сработало")
+    except ValueError:
+        print("Исключение сработало")
+
+
+def test_get_middle_price():
+    """Проверяет подсчет средний ценник всех товаров"""
+    p1 = Product("p1", "description", 50, 2)
+    p2 = Product("p2", "description", 150, 3)
+    category = Category("CategoryName", "Description", [p1, p2])
+    assert category.middle_price() == (50 + 150) / 2
+
+
+def test_empty_category():
+    """Проверяет расчет средней цены для пустой категории"""
+    empty_category = Category("Category", "Empty")
+    assert empty_category.middle_price() == 0
+
+
+def test_middle_price_with_zero_quantity():
+    """Проверяет расчет средней цены для товаров с нулевым количеством"""
+    with pytest.raises(
+        ValueError, match="Товар с нулевым количеством не может быть добавлен"
+    ):
+        Product("Name", "Description", 300, 0)
